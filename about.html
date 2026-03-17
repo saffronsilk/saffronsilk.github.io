@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>About — Saffron Silk Studio</title>
+<meta name="description" content="The story and clinical credibility behind Saffron Silk Studio.">
+<link rel="stylesheet" href="css/main.css">
+<style>
+  /* PAGE HERO */
+  .page-hero {
+    padding: 80px 64px 72px;
+    background: var(--parchment);
+    position: relative; overflow: hidden;
+  }
+  .page-hero::after {
+    content: ''; position: absolute; bottom: 0; left: 64px; right: 64px; height: 1px;
+    background: linear-gradient(to right, transparent, var(--blush), transparent);
+  }
+  .page-hero-inner { max-width: 700px; }
+  .page-hero-bg {
+    position: absolute; top: 0; right: 0;
+    width: 400px; height: 100%;
+    background: radial-gradient(ellipse at 60% 40%, rgba(181,103,74,0.1) 0%, transparent 60%);
+    pointer-events: none;
+  }
+
+  /* BRAND STORY */
+  .story-section {
+    display: grid; grid-template-columns: 1fr 1.2fr; gap: 80px; align-items: start;
+  }
+  .story-sticky { position: sticky; top: 112px; }
+  .story-body p {
+    font-size: 13.5px; line-height: 2.05; color: var(--fig-mid);
+    letter-spacing: 0.035em; margin-bottom: 28px;
+  }
+  .story-body p:last-child { margin-bottom: 0; }
+  .story-body strong { color: var(--fig); font-weight: 400; }
+  .story-body em { font-style: italic; color: var(--terracotta); }
+
+  /* CREDENTIALS */
+  .credentials-section { background: var(--fig); padding: 96px 64px; }
+  .cred-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 1px; background: rgba(181,103,74,0.12); margin-top: 60px; }
+  .cred-card { background: var(--fig); padding: 44px 36px; }
+  .cred-icon { font-family: 'Playfair Display', serif; font-size: 40px; font-style: italic; color: rgba(181,103,74,0.25); line-height:1; margin-bottom: 24px; }
+  .cred-title { font-size: 9px; letter-spacing: 0.38em; text-transform: uppercase; color: var(--terra-lt); margin-bottom: 14px; }
+  .cred-desc { font-size: 12px; line-height: 1.95; color: rgba(196,180,164,0.62); letter-spacing: 0.03em; }
+
+  /* PHILOSOPHY */
+  .philosophy-section { padding: 96px 64px; }
+  .philosophy-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 1px; background: var(--blush); border: 1px solid var(--blush); margin-top: 60px; }
+  .philosophy-card { background: var(--linen); padding: 44px 40px; }
+  .phil-num { font-family: 'Playfair Display', serif; font-size: 14px; font-style: italic; color: var(--terracotta); margin-bottom: 16px; }
+  .phil-title { font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 400; color: var(--fig); margin-bottom: 14px; line-height: 1.3; }
+  .phil-title em { font-style: italic; color: var(--terracotta); }
+  .phil-desc { font-size: 12px; line-height: 1.95; color: var(--fig-mid); letter-spacing: 0.03em; }
+
+  /* POSITIONING STATEMENT */
+  .positioning {
+    background: var(--parchment); padding: 96px 64px;
+    position: relative;
+  }
+  .positioning::before {
+    content: ''; position: absolute; top: 0; left: 64px; right: 64px; height: 1px;
+    background: linear-gradient(to right, transparent, var(--blush), transparent);
+  }
+  .positioning-inner { max-width: 760px; margin: 0 auto; text-align: center; }
+  .positioning-quote {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(24px, 3vw, 38px); font-weight: 400;
+    line-height: 1.5; letter-spacing: 0.01em;
+    color: var(--fig); margin-bottom: 36px;
+  }
+  .positioning-quote em { font-style: italic; color: var(--terracotta); }
+  .positioning-attr { font-size: 9.5px; letter-spacing: 0.35em; text-transform: uppercase; color: var(--dust); }
+
+  @media (max-width: 960px) {
+    .page-hero { padding: 60px 28px 56px; }
+    .page-hero::after { left: 28px; right: 28px; }
+    .story-section { grid-template-columns: 1fr; gap: 48px; }
+    .story-sticky { position: static; }
+    .credentials-section, .philosophy-section, .positioning { padding: 72px 28px; }
+    .cred-grid, .philosophy-grid { grid-template-columns: 1fr; }
+    .positioning-inner { text-align: left; }
+    .positioning::before { left: 28px; right: 28px; }
+  }
+</style>
+</head>
+<body>
+<div class="grain"></div>
+<div class="cursor" id="cur"></div>
+<div class="cursor-ring" id="curRing"></div>
+
+<nav class="nav">
+  <a href="index.html" class="nav-logo">Saffron <em>Silk</em> Studio</a>
+  <div class="nav-links">
+    <a href="index.html">Home</a>
+    <a href="about.html" class="active">About</a>
+    <a href="quiz.html">Skin Analysis</a>
+    <a href="contact.html">Contact</a>
+    <a href="contact.html" class="nav-cta">Get Early Access</a>
+  </div>
+  <button class="nav-hamburger" id="burger" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+<div class="mobile-nav" id="mobileNav">
+  <button class="mobile-nav-close" id="mobileClose">✕</button>
+  <a href="index.html">Home</a>
+  <a href="about.html">About</a>
+  <a href="quiz.html"><em>Skin Analysis</em></a>
+  <a href="contact.html">Contact</a>
+</div>
+
+<div class="page">
+
+  <!-- PAGE HERO -->
+  <div class="page-hero">
+    <div class="page-hero-bg"></div>
+    <div class="page-hero-inner">
+      <div class="eyebrow" style="opacity:0;animation:rise 0.9s ease 0.1s forwards">
+        <div class="eyebrow-line"></div>
+        <div class="eyebrow-text">The Studio</div>
+      </div>
+      <h1 class="display" style="opacity:0;animation:rise 1s ease 0.25s forwards">
+        Built from<br>within <em>the clinic.</em>
+      </h1>
+    </div>
+  </div>
+
+  <!-- BRAND STORY -->
+  <section class="section story-section">
+    <div class="story-sticky">
+      <div class="eyebrow fade-up">
+        <div class="eyebrow-line"></div>
+        <div class="eyebrow-text">Our Story</div>
+      </div>
+      <h2 class="section-title fade-up">Not inspired<br>by science.<br><em>Made from it.</em></h2>
+    </div>
+    <div class="story-body">
+      <p class="fade-up">
+        Saffron Silk Studio began where most skincare brands never go — inside a laboratory. 
+        Built on <strong>6+ years of clinical and phlebotomy experience</strong>, the brand exists because of a 
+        fundamental belief: that skin deserves the same rigour applied to clinical medicine.
+      </p>
+      <p class="fade-up">
+        Most luxury skincare borrows the aesthetics of science — the clinical packaging, the ingredient lists, 
+        the white-coat imagery. Saffron Silk Studio is different. Its foundation is an actual understanding 
+        of <em>blood chemistry</em>, cellular biology, and how the body's systems interact at a molecular level.
+      </p>
+      <p class="fade-up">
+        That background shapes everything — from how ingredients are evaluated, to how skin conditions are 
+        understood, to the brand's future direction in advanced aesthetic services. This is not a passion project 
+        that discovered skincare. This is a clinical mind that refuses to separate precision from beauty.
+      </p>
+      <p class="fade-up">
+        The name <strong>Saffron Silk</strong> holds both identities. Saffron: rare, potent, rooted in ancient 
+        medicinal tradition. Silk: refined, tactile, unmistakably luxurious. Together, they describe exactly 
+        what the brand delivers — efficacy that feels extraordinary.
+      </p>
+    </div>
+  </section>
+
+  <div class="divider-line" style="margin:0 64px;width:calc(100% - 128px);"></div>
+
+  <!-- CREDENTIALS -->
+  <section class="credentials-section">
+    <div class="eyebrow fade-up" style="--eyebrow-color: var(--terra-lt);">
+      <div class="eyebrow-line" style="background:var(--terra-lt);"></div>
+      <div class="eyebrow-text" style="color:var(--terra-lt);">Credentials</div>
+    </div>
+    <h2 class="section-title fade-up" style="color:var(--parchment);">The clinical<br><em>foundation.</em></h2>
+    <div class="cred-grid">
+      <div class="cred-card fade-up">
+        <div class="cred-icon">Rx</div>
+        <div class="cred-title">Licensed Phlebotomist</div>
+        <p class="cred-desc">California-licensed with 6+ years of clinical and laboratory experience. A deep understanding of blood chemistry, vascular biology, and the body's systemic responses.</p>
+      </div>
+      <div class="cred-card fade-up">
+        <div class="cred-icon">Æ</div>
+        <div class="cred-title">Aesthetician License — In Progress</div>
+        <p class="cred-desc">Advanced hands-on training in skin science, treatment protocols, and aesthetic practice — currently completing licensure in California.</p>
+      </div>
+      <div class="cred-card fade-up">
+        <div class="cred-icon">℞</div>
+        <div class="cred-title">Lab Chemistry Background</div>
+        <p class="cred-desc">Formal training in laboratory chemistry provides a rigorous lens through which every ingredient claim, formulation decision, and treatment protocol is evaluated.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- PHILOSOPHY -->
+  <section class="philosophy-section">
+    <div class="eyebrow fade-up">
+      <div class="eyebrow-line"></div>
+      <div class="eyebrow-text">Brand Philosophy</div>
+    </div>
+    <h2 class="section-title fade-up">How we <em>think.</em></h2>
+    <div class="philosophy-grid">
+      <div class="philosophy-card fade-up">
+        <div class="phil-num">01</div>
+        <div class="phil-title">Efficacy is<br><em>non-negotiable.</em></div>
+        <p class="phil-desc">Every ingredient, every formulation, every recommendation must meet a standard of demonstrated benefit. We don't include things because they sound good. We include them because they work.</p>
+      </div>
+      <div class="philosophy-card fade-up">
+        <div class="phil-num">02</div>
+        <div class="phil-title">Luxury is not<br><em>superficial.</em></div>
+        <p class="phil-desc">True luxury in skincare means the highest quality actives, the most precise delivery systems, and a ritual worth returning to. It is not packaging. It is not price point. It is the complete experience.</p>
+      </div>
+      <div class="philosophy-card fade-up">
+        <div class="phil-num">03</div>
+        <div class="phil-title">Skin deserves<br><em>honest answers.</em></div>
+        <p class="phil-desc">We won't overclaim. We won't use pseudoscience to sell aspiration. The brand's clinical background means we hold ourselves to a higher standard of accuracy than the industry typically demands.</p>
+      </div>
+      <div class="philosophy-card fade-up">
+        <div class="phil-num">04</div>
+        <div class="phil-title">The future is<br><em>biological.</em></div>
+        <p class="phil-desc">The most exciting advances in skincare sit at the intersection of biotech and aesthetics. Saffron Silk Studio is positioned to move with that frontier — grounded, credentialed, and ready.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- POSITIONING QUOTE -->
+  <section class="positioning">
+    <div class="positioning-inner">
+      <div class="positioning-quote fade-up">
+        "Precision without beauty is a lab report.<br>Beauty without precision is <em>decoration.</em><br>We refuse to choose."
+      </div>
+      <div class="positioning-attr fade-up">Saffron Silk Studio</div>
+      <div style="margin-top:48px;" class="fade-up">
+        <a href="quiz.html" class="btn-primary">Begin Your Skin Analysis</a>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-top">
+    <div>
+      <div class="footer-brand-name">Saffron <em>Silk</em> Studio</div>
+      <p class="footer-tagline">A clinical-luxury skincare studio where laboratory precision meets elevated aesthetic care.</p>
+    </div>
+    <div>
+      <div class="footer-col-title">Navigate</div>
+      <div class="footer-links">
+        <a href="index.html">Home</a>
+        <a href="about.html">About</a>
+        <a href="quiz.html">Skin Analysis</a>
+        <a href="contact.html">Contact</a>
+      </div>
+    </div>
+    <div>
+      <div class="footer-col-title">Connect</div>
+      <div class="footer-links">
+        <a href="https://instagram.com/saffronsilkstudio" target="_blank">@saffronsilkstudio</a>
+        <a href="contact.html">Get Early Access</a>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <div class="footer-copy">© 2025 Saffron Silk Studio · All rights reserved</div>
+    <div class="footer-copy">Clinical Luxury Skincare</div>
+  </div>
+</footer>
+
+<script src="js/main.js"></script>
+</body>
+</html>

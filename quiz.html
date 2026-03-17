@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Skin Analysis — Saffron Silk Studio</title>
+<meta name="description" content="Complimentary AI skin profile consultation by Saffron Silk Studio.">
+<link rel="stylesheet" href="css/main.css">
+<style>
+  .page-hero {
+    padding: 80px 64px 72px; background: var(--parchment); position: relative; overflow: hidden;
+  }
+  .page-hero::after {
+    content:''; position:absolute; bottom:0; left:64px; right:64px; height:1px;
+    background: linear-gradient(to right, transparent, var(--blush), transparent);
+  }
+  .page-hero-bg {
+    position:absolute; top:0; right:0; width:400px; height:100%;
+    background: radial-gradient(ellipse at 60% 40%, rgba(181,103,74,0.1) 0%, transparent 60%);
+    pointer-events:none;
+  }
+
+  /* QUIZ LAYOUT */
+  .quiz-layout {
+    display: grid; grid-template-columns: 380px 1fr; gap: 64px; align-items: start;
+    padding: 80px 64px;
+  }
+  .quiz-sidebar { position: sticky; top: 112px; }
+  .sidebar-steps { margin-top: 36px; display: flex; flex-direction: column; gap: 0; }
+  .step-item {
+    display: flex; align-items: flex-start; gap: 16px;
+    padding: 16px 0; border-bottom: 1px solid var(--blush);
+    transition: opacity 0.3s;
+  }
+  .step-item:first-child { border-top: 1px solid var(--blush); }
+  .step-item.inactive { opacity: 0.35; }
+  .step-pip {
+    width: 24px; height: 24px; border: 1px solid var(--blush); border-radius: 50%;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    font-size: 9px; letter-spacing: 0.05em; color: var(--dust); margin-top: 1px;
+    transition: all 0.3s;
+  }
+  .step-item.current .step-pip { border-color: var(--terracotta); background: var(--terracotta); color: var(--white); }
+  .step-item.done .step-pip { border-color: var(--terracotta); color: var(--terracotta); }
+  .step-text { font-size: 11.5px; color: var(--fig-mid); line-height: 1.6; letter-spacing: 0.03em; }
+  .step-text strong { display: block; font-weight: 400; color: var(--fig); font-size: 12px; margin-bottom: 2px; }
+
+  /* QUIZ CARD */
+  .quiz-card {
+    background: var(--parchment); border: 1px solid var(--blush); position: relative; overflow: hidden;
+  }
+  .quiz-card::before {
+    content:''; position:absolute; top:0; left:0; width:3px; height:100%;
+    background: linear-gradient(to bottom, var(--terracotta), var(--blush));
+  }
+
+  .qcard-header {
+    padding: 28px 44px; border-bottom: 1px solid var(--blush);
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .qcard-label { font-size: 9px; letter-spacing: 0.35em; text-transform: uppercase; color: var(--fig-mid); }
+  .q-pips { display: flex; gap: 4px; }
+  .q-pip { width: 28px; height: 2px; background: var(--blush); transition: background 0.4s; }
+  .q-pip.done { background: var(--terracotta); }
+
+  .qcard-body {
+    padding: 52px 44px 44px; min-height: 400px;
+    display: flex; flex-direction: column; justify-content: space-between;
+  }
+  .q-num-label {
+    font-family: 'Playfair Display', serif; font-size: 11px; font-style: italic;
+    color: var(--terra-lt); margin-bottom: 16px; letter-spacing: 0.06em;
+  }
+  .q-text {
+    font-family: 'Playfair Display', serif; font-size: 26px; font-weight: 400;
+    line-height: 1.38; color: var(--fig); margin-bottom: 40px; max-width: 580px;
+  }
+  .q-options { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 44px; }
+  .q-opt {
+    padding: 18px 22px; border: 1px solid var(--blush); background: transparent; cursor: pointer;
+    font-family: 'Jost', sans-serif; font-size: 12px; font-weight: 300;
+    letter-spacing: 0.04em; color: var(--fig-mid); text-align: left; line-height: 1.6;
+    transition: all 0.22s ease; position: relative;
+  }
+  .q-opt:hover { border-color: var(--terra-lt); background: rgba(181,103,74,0.04); color: var(--fig); }
+  .q-opt.chosen { border-color: var(--terracotta); background: rgba(181,103,74,0.07); color: var(--fig); }
+  .q-opt.chosen::after { content:'✓'; position:absolute; top:10px; right:14px; font-size:10px; color:var(--terracotta); }
+  .opt-key { display:block; font-size:8px; letter-spacing:0.3em; text-transform:uppercase; color:var(--terra-lt); margin-bottom:5px; }
+
+  .q-nav { display: flex; justify-content: space-between; align-items: center; }
+  .q-back {
+    font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--dust);
+    background: none; border: none; cursor: pointer; font-family: 'Jost', sans-serif; transition: color 0.2s;
+  }
+  .q-back:hover { color: var(--fig-mid); }
+  .q-next {
+    padding: 15px 44px; background: var(--fig); color: var(--linen); border: none; cursor: pointer;
+    font-family: 'Jost', sans-serif; font-size: 9.5px; letter-spacing: 0.35em; text-transform: uppercase;
+    transition: background 0.3s;
+  }
+  .q-next:hover { background: var(--terracotta); }
+  .q-next:disabled { background: var(--blush); color: var(--dust); cursor: not-allowed; }
+
+  /* ANALYZING */
+  .q-analyzing {
+    display: none; flex-direction: column; align-items: center; justify-content: center;
+    min-height: 400px; gap: 28px; padding: 52px 44px;
+  }
+  .analysis-ring {
+    width: 60px; height: 60px; border: 1px solid var(--blush);
+    border-top-color: var(--terracotta); border-radius: 50%;
+    animation: spin 1.8s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .analysis-copy { font-family: 'Playfair Display', serif; font-size: 20px; font-style: italic; color: var(--fig-mid); text-align: center; }
+
+  /* RESULTS */
+  .q-results { display: none; }
+  .results-top {
+    padding: 40px 44px 32px; border-bottom: 1px solid var(--blush);
+    background: rgba(181,103,74,0.04);
+  }
+  .r-badge {
+    display: inline-block; padding: 5px 16px; border: 1px solid var(--terracotta);
+    font-size: 8.5px; letter-spacing: 0.35em; text-transform: uppercase; color: var(--terracotta); margin-bottom: 16px;
+  }
+  .r-headline { font-family: 'Playfair Display', serif; font-size: 28px; font-weight: 400; line-height: 1.25; color: var(--fig); }
+  .results-body { padding: 36px 44px 48px; }
+  .r-analysis { font-size: 13px; line-height: 2; color: var(--fig-mid); letter-spacing: 0.03em; margin-bottom: 36px; }
+  .r-pillars {
+    display: grid; grid-template-columns: repeat(3,1fr); gap: 1px;
+    background: var(--blush); border: 1px solid var(--blush); margin-bottom: 36px;
+  }
+  .r-pill { background: var(--linen); padding: 22px 20px; }
+  .r-pill-label { font-size: 8px; letter-spacing: 0.28em; text-transform: uppercase; color: var(--terracotta); margin-bottom: 7px; }
+  .r-pill-val { font-family: 'Playfair Display', serif; font-size: 15px; font-weight: 400; color: var(--fig); line-height: 1.4; }
+  .r-cta { display: flex; align-items: center; gap: 24px; flex-wrap: wrap; }
+  .r-btn-ghost-sm {
+    font-size: 10px; letter-spacing: 0.18em; color: var(--fig-mid); background: none; border: none;
+    cursor: pointer; font-family: 'Jost', sans-serif; text-decoration: underline; text-underline-offset: 3px;
+  }
+  .q-error {
+    display: none; padding: 28px 44px; font-size: 12px; color: #7A3030;
+    letter-spacing: 0.03em; line-height: 1.8; background: rgba(180,60,60,0.04);
+    border-top: 1px solid rgba(180,60,60,0.1);
+  }
+
+  /* HOW IT WORKS */
+  .how-section { background: var(--fig); padding: 80px 64px; }
+  .how-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 48px; margin-top: 52px; }
+  .how-item { }
+  .how-num { font-family: 'Playfair Display', serif; font-size: 44px; font-style: italic; color: rgba(181,103,74,0.2); line-height:1; margin-bottom: 20px; }
+  .how-title { font-size: 9px; letter-spacing: 0.35em; text-transform: uppercase; color: var(--terra-lt); margin-bottom: 12px; }
+  .how-desc { font-size: 12px; line-height: 1.95; color: rgba(196,180,164,0.6); letter-spacing: 0.03em; }
+
+  @media (max-width: 960px) {
+    .page-hero { padding: 60px 28px 56px; }
+    .page-hero::after { left: 28px; right: 28px; }
+    .quiz-layout { grid-template-columns: 1fr; padding: 52px 28px; }
+    .quiz-sidebar { position: static; }
+    .sidebar-steps { display: none; }
+    .qcard-body { padding: 36px 24px 32px; }
+    .qcard-header, .results-top, .results-body { padding-left: 24px; padding-right: 24px; }
+    .q-options { grid-template-columns: 1fr; }
+    .r-pillars { grid-template-columns: 1fr; }
+    .how-section { padding: 60px 28px; }
+    .how-grid { grid-template-columns: 1fr; gap: 32px; }
+  }
+</style>
+</head>
+<body>
+<div class="grain"></div>
+<div class="cursor" id="cur"></div>
+<div class="cursor-ring" id="curRing"></div>
+
+<nav class="nav">
+  <a href="index.html" class="nav-logo">Saffron <em>Silk</em> Studio</a>
+  <div class="nav-links">
+    <a href="index.html">Home</a>
+    <a href="about.html">About</a>
+    <a href="quiz.html" class="active">Skin Analysis</a>
+    <a href="contact.html">Contact</a>
+    <a href="contact.html" class="nav-cta">Get Early Access</a>
+  </div>
+  <button class="nav-hamburger" id="burger" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+<div class="mobile-nav" id="mobileNav">
+  <button class="mobile-nav-close" id="mobileClose">✕</button>
+  <a href="index.html">Home</a>
+  <a href="about.html">About</a>
+  <a href="quiz.html"><em>Skin Analysis</em></a>
+  <a href="contact.html">Contact</a>
+</div>
+
+<div class="page">
+
+  <div class="page-hero">
+    <div class="page-hero-bg"></div>
+    <div style="max-width:640px;">
+      <div class="eyebrow" style="opacity:0;animation:rise 0.9s ease 0.1s forwards">
+        <div class="eyebrow-line"></div>
+        <div class="eyebrow-text">Complimentary</div>
+      </div>
+      <h1 class="display" style="opacity:0;animation:rise 1s ease 0.25s forwards">
+        Your skin,<br><em>precisely read.</em>
+      </h1>
+      <p class="body-text" style="margin-top:24px;opacity:0;animation:rise 1s ease 0.4s forwards">
+        Answer five questions. Receive a clinical skin profile developed from our laboratory and aesthetic science background.
+      </p>
+    </div>
+  </div>
+
+  <div class="quiz-layout">
+    <!-- SIDEBAR -->
+    <div class="quiz-sidebar">
+      <div class="eyebrow fade-up"><div class="eyebrow-line"></div><div class="eyebrow-text">Your Journey</div></div>
+      <div class="sidebar-steps" id="sidebar-steps">
+        <div class="step-item current" data-step="0">
+          <div class="step-pip">1</div>
+          <div class="step-text"><strong>Skin Feel</strong>How your skin behaves throughout the day</div>
+        </div>
+        <div class="step-item inactive" data-step="1">
+          <div class="step-pip">2</div>
+          <div class="step-text"><strong>Post-Cleanse Response</strong>How skin recovers after cleansing</div>
+        </div>
+        <div class="step-item inactive" data-step="2">
+          <div class="step-pip">3</div>
+          <div class="step-text"><strong>Primary Concern</strong>Your most persistent skin challenge</div>
+        </div>
+        <div class="step-item inactive" data-step="3">
+          <div class="step-pip">4</div>
+          <div class="step-text"><strong>Product Reactivity</strong>How your skin handles new products</div>
+        </div>
+        <div class="step-item inactive" data-step="4">
+          <div class="step-pip">5</div>
+          <div class="step-text"><strong>Environmental Triggers</strong>What external factors affect your skin</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- QUIZ -->
+    <div class="quiz-card">
+      <div class="qcard-header">
+        <div class="qcard-label">Skin Profile Consultation — Saffron Silk Studio</div>
+        <div class="q-pips" id="q-pips">
+          <div class="q-pip done"></div><div class="q-pip"></div><div class="q-pip"></div><div class="q-pip"></div><div class="q-pip"></div>
+        </div>
+      </div>
+
+      <div class="qcard-body" id="qcard-body">
+        <div>
+          <div class="q-num-label" id="q-num">Question 01 of 05</div>
+          <div class="q-text" id="q-text"></div>
+          <div class="q-options" id="q-opts"></div>
+        </div>
+        <div class="q-nav">
+          <button class="q-back" id="q-back" onclick="prevQ()" style="visibility:hidden">← Back</button>
+          <button class="q-next" id="q-next" onclick="nextQ()" disabled>Continue</button>
+        </div>
+      </div>
+
+      <div class="q-analyzing" id="q-analyzing">
+        <div class="analysis-ring"></div>
+        <div class="analysis-copy">Composing your skin profile…</div>
+      </div>
+
+      <div class="q-results" id="q-results">
+        <div class="results-top">
+          <div class="r-badge" id="r-badge"></div>
+          <div class="r-headline" id="r-headline"></div>
+        </div>
+        <div class="results-body">
+          <div class="r-analysis" id="r-analysis"></div>
+          <div class="r-pillars" id="r-pillars"></div>
+          <div class="r-cta">
+            <a href="contact.html" class="btn-primary">Join the Waitlist</a>
+            <button class="r-btn-ghost-sm" onclick="resetQ()">Retake Analysis</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="q-error" id="q-error"></div>
+    </div>
+  </div>
+
+  <!-- HOW IT WORKS -->
+  <section class="how-section">
+    <div class="eyebrow fade-up" style="--c:var(--terra-lt)">
+      <div class="eyebrow-line" style="background:var(--terra-lt)"></div>
+      <div class="eyebrow-text" style="color:var(--terra-lt)">How It Works</div>
+    </div>
+    <h2 class="section-title fade-up" style="color:var(--parchment)">Clinical analysis,<br><em>in five questions.</em></h2>
+    <div class="how-grid">
+      <div class="how-item fade-up">
+        <div class="how-num">01</div>
+        <div class="how-title">Answer Five Questions</div>
+        <p class="how-desc">Each question is designed to reveal a specific dimension of your skin's behaviour — not just your skin type, but how it responds, reacts, and adapts.</p>
+      </div>
+      <div class="how-item fade-up">
+        <div class="how-num">02</div>
+        <div class="how-title">Receive a Precise Profile</div>
+        <p class="how-desc">Your answers are analysed against clinical skin science principles to produce a personalised profile — your skin type, key dynamics, and foundational priorities.</p>
+      </div>
+      <div class="how-item fade-up">
+        <div class="how-num">03</div>
+        <div class="how-title">Build a Better Routine</div>
+        <p class="how-desc">Understanding how your skin actually behaves is the foundation of every intelligent skincare decision. Your profile is a starting point, not a label.</p>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<footer>
+  <div class="footer-top">
+    <div>
+      <div class="footer-brand-name">Saffron <em>Silk</em> Studio</div>
+      <p class="footer-tagline">A clinical-luxury skincare studio where laboratory precision meets elevated aesthetic care.</p>
+    </div>
+    <div>
+      <div class="footer-col-title">Navigate</div>
+      <div class="footer-links">
+        <a href="index.html">Home</a>
+        <a href="about.html">About</a>
+        <a href="quiz.html">Skin Analysis</a>
+        <a href="contact.html">Contact</a>
+      </div>
+    </div>
+    <div>
+      <div class="footer-col-title">Connect</div>
+      <div class="footer-links">
+        <a href="https://instagram.com/saffronsilkstudio" target="_blank">@saffronsilkstudio</a>
+        <a href="contact.html">Get Early Access</a>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <div class="footer-copy">© 2025 Saffron Silk Studio · All rights reserved</div>
+    <div class="footer-copy">Clinical Luxury Skincare</div>
+  </div>
+</footer>
+
+<script src="js/main.js"></script>
+<script>
+const Qs = [
+  { q:"By midday, how does your skin feel without any products applied?", opts:[{k:"A",t:"Tight, uncomfortable, or flaky"},{k:"B",t:"Balanced — neither oily nor dry"},{k:"C",t:"Shiny in the T-zone, normal elsewhere"},{k:"D",t:"Oily across the full face"}] },
+  { q:"After cleansing, your skin typically:", opts:[{k:"A",t:"Feels stripped and tight for a prolonged period"},{k:"B",t:"Returns to normal within about 20 minutes"},{k:"C",t:"Feels briefly clean, then becomes shiny"},{k:"D",t:"Feels reactive — flushed or sensitized"}] },
+  { q:"Which concern is most persistent in your skin?", opts:[{k:"A",t:"Dryness, dullness, or uneven texture"},{k:"B",t:"Congestion, enlarged pores, or breakouts"},{k:"C",t:"Redness, sensitivity, or unpredictable reactions"},{k:"D",t:"Uneven tone, fine lines, or loss of radiance"}] },
+  { q:"When you introduce a new product, your skin tends to:", opts:[{k:"A",t:"Absorb it well with minimal reaction"},{k:"B",t:"Occasionally respond with redness or irritation"},{k:"C",t:"Break out, especially in congestion-prone zones"},{k:"D",t:"Feel temporarily congested or heavy"}] },
+  { q:"Which environment affects your skin most noticeably?", opts:[{k:"A",t:"Heated air or low-humidity spaces"},{k:"B",t:"Urban pollution or heavy topical products"},{k:"C",t:"Stress, hormonal shifts, or dietary changes"},{k:"D",t:"Heat and high humidity"}] }
+];
+
+let cQ=0, ans=[], sel=null;
+
+function updateSidebar() {
+  document.querySelectorAll('.step-item').forEach((el, i) => {
+    el.classList.remove('current','done','inactive');
+    if (i < cQ) el.classList.add('done');
+    else if (i === cQ) el.classList.add('current');
+    else el.classList.add('inactive');
+    const pip = el.querySelector('.step-pip');
+    pip.textContent = i < cQ ? '✓' : (i+1);
+  });
+}
+
+function renderQ() {
+  const q = Qs[cQ];
+  document.getElementById('q-num').textContent = `Question 0${cQ+1} of 0${Qs.length}`;
+  document.getElementById('q-text').textContent = q.q;
+  const c = document.getElementById('q-opts'); c.innerHTML = '';
+  q.opts.forEach((o,i) => {
+    const b = document.createElement('button');
+    b.className = 'q-opt' + (ans[cQ]===i?' chosen':'');
+    b.innerHTML = `<span class="opt-key">${o.k}</span>${o.t}`;
+    b.onclick = () => pick(i); c.appendChild(b);
+  });
+  document.querySelectorAll('.q-pip').forEach((p,i) => p.classList.toggle('done', i<=cQ));
+  document.getElementById('q-back').style.visibility = cQ>0?'visible':'hidden';
+  document.getElementById('q-next').disabled = ans[cQ]===undefined;
+  document.getElementById('q-next').textContent = cQ===Qs.length-1?'Analyse My Skin':'Continue';
+  updateSidebar();
+}
+
+function pick(i) {
+  ans[cQ]=i; sel=i;
+  document.querySelectorAll('.q-opt').forEach((b,j) => b.classList.toggle('chosen', j===i));
+  document.getElementById('q-next').disabled = false;
+}
+
+function nextQ() {
+  if (ans[cQ]===undefined) return;
+  if (cQ<Qs.length-1) { cQ++; sel=ans[cQ]??null; renderQ(); }
+  else runAnalysis();
+}
+function prevQ() { if(cQ>0){cQ--;sel=ans[cQ]??null;renderQ();} }
+
+async function runAnalysis() {
+  document.getElementById('qcard-body').style.display='none';
+  document.getElementById('q-analyzing').style.display='flex';
+  const summary = Qs.map((q,i)=>`Q${i+1}: "${q.q}" → "${q.opts[ans[i]]?.t||'No answer'}"`).join('\n');
+  const prompt = `You are a clinical skincare expert for Saffron Silk Studio, a clinical-luxury biotech skincare brand founded by a licensed phlebotomist with 6+ years of lab experience. Provide a precise, intelligent skin profile.\n\nClient responses:\n${summary}\n\nRespond ONLY with valid JSON, no markdown:\n{"skinType":"2-4 word descriptive skin type","headline":"One elegant precise sentence describing their skin defining characteristic","analysis":"Two to three paragraphs. Clinical but accessible. Speak directly to the client using 'your'. Address their skin specific dynamics, how characteristics interact, and what that means for an effective routine. No generic advice. No product name recommendations. No medical claims.","p1label":"First priority","p1val":"3-5 words","p2label":"Key consideration","p2val":"3-5 words","p3label":"Approach","p3val":"3-5 words"}`;
+  try {
+    const res = await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:1000,messages:[{role:"user",content:prompt}]})});
+    const data = await res.json();
+    const txt = data.content.map(b=>b.text||'').join('');
+    const r = JSON.parse(txt.replace(/```json|```/g,'').trim());
+    showResults(r);
+  } catch(e) {
+    document.getElementById('q-analyzing').style.display='none';
+    const err=document.getElementById('q-error');
+    err.style.display='block';
+    err.textContent='Your analysis could not be completed at this time. Please try again shortly.';
+  }
+}
+
+function showResults(r) {
+  document.getElementById('q-analyzing').style.display='none';
+  document.getElementById('r-badge').textContent=r.skinType;
+  document.getElementById('r-headline').textContent=r.headline;
+  document.getElementById('r-analysis').innerHTML=r.analysis.replace(/\n\n/g,'<br><br>').replace(/\n/g,'<br>');
+  document.getElementById('r-pillars').innerHTML=`<div class="r-pill"><div class="r-pill-label">${r.p1label}</div><div class="r-pill-val">${r.p1val}</div></div><div class="r-pill"><div class="r-pill-label">${r.p2label}</div><div class="r-pill-val">${r.p2val}</div></div><div class="r-pill"><div class="r-pill-label">${r.p3label}</div><div class="r-pill-val">${r.p3val}</div></div>`;
+  document.getElementById('q-results').style.display='block';
+}
+
+function resetQ(){
+  cQ=0;ans=[];sel=null;
+  document.getElementById('q-results').style.display='none';
+  document.getElementById('q-error').style.display='none';
+  document.getElementById('qcard-body').style.display='flex';
+  renderQ();
+}
+
+renderQ();
+</script>
+</body>
+</html>

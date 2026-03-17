@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Contact — Saffron Silk Studio</title>
+<meta name="description" content="Join the Saffron Silk Studio waitlist for early access.">
+<link rel="stylesheet" href="css/main.css">
+<style>
+  .page-hero {
+    padding: 80px 64px 72px; background: var(--parchment); position: relative; overflow: hidden;
+  }
+  .page-hero::after {
+    content:''; position:absolute; bottom:0; left:64px; right:64px; height:1px;
+    background:linear-gradient(to right, transparent, var(--blush), transparent);
+  }
+  .page-hero-bg {
+    position:absolute; top:0; right:0; width:400px; height:100%;
+    background:radial-gradient(ellipse at 60% 40%, rgba(181,103,74,0.1) 0%, transparent 60%);
+    pointer-events:none;
+  }
+
+  /* CONTACT LAYOUT */
+  .contact-layout {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: start;
+    padding: 80px 64px;
+  }
+  .contact-info { position: sticky; top: 112px; }
+
+  /* FORM */
+  .contact-form { }
+  .form-group { margin-bottom: 32px; }
+  .form-label {
+    display: block; font-size: 8.5px; letter-spacing: 0.38em; text-transform: uppercase;
+    color: var(--dust); margin-bottom: 12px;
+  }
+  .form-input {
+    width: 100%; padding: 14px 0; border: none; border-bottom: 1px solid var(--fig-mid);
+    background: transparent; font-family: 'Jost', sans-serif;
+    font-size: 13px; font-weight: 300; letter-spacing: 0.04em; color: var(--fig);
+    outline: none; transition: border-color 0.3s;
+  }
+  .form-input:focus { border-bottom-color: var(--terracotta); }
+  .form-input::placeholder { color: var(--dust); }
+  textarea.form-input { resize: none; min-height: 100px; line-height: 1.8; }
+  .form-select {
+    width: 100%; padding: 14px 0; border: none; border-bottom: 1px solid var(--fig-mid);
+    background: transparent; font-family: 'Jost', sans-serif;
+    font-size: 13px; font-weight: 300; letter-spacing: 0.04em; color: var(--fig);
+    outline: none; appearance: none; cursor: pointer;
+    transition: border-color 0.3s;
+  }
+  .form-select:focus { border-bottom-color: var(--terracotta); }
+  .form-checkboxes { display: flex; flex-direction: column; gap: 12px; }
+  .form-check {
+    display: flex; align-items: flex-start; gap: 14px; cursor: pointer;
+    font-size: 12px; color: var(--fig-mid); letter-spacing: 0.03em; line-height: 1.6;
+  }
+  .form-check input { display: none; }
+  .check-box {
+    width: 16px; height: 16px; border: 1px solid var(--blush); flex-shrink: 0;
+    margin-top: 2px; display: flex; align-items: center; justify-content: center;
+    transition: all 0.2s; font-size: 9px; color: var(--terracotta);
+  }
+  .form-check:has(input:checked) .check-box { border-color: var(--terracotta); background: rgba(181,103,74,0.08); }
+  .form-note { margin-top: 14px; font-size: 9.5px; color: var(--dust); letter-spacing: 0.05em; }
+
+  /* INFO ITEMS */
+  .info-items { margin-top: 48px; display: flex; flex-direction: column; gap: 0; }
+  .info-item { padding: 20px 0; border-bottom: 1px solid var(--blush); }
+  .info-item:first-child { border-top: 1px solid var(--blush); }
+  .info-item-label { font-size: 8.5px; letter-spacing: 0.38em; text-transform: uppercase; color: var(--terracotta); margin-bottom: 6px; }
+  .info-item-val { font-size: 12.5px; color: var(--fig-mid); letter-spacing: 0.04em; line-height: 1.7; }
+  .info-item-val a { color: var(--fig); text-decoration: none; transition: color 0.2s; }
+  .info-item-val a:hover { color: var(--terracotta); }
+
+  /* CONFIRMATION */
+  .form-confirm {
+    display: none; text-align: center; padding: 60px 40px;
+    border: 1px solid var(--blush); background: var(--parchment);
+  }
+  .confirm-icon { font-family: 'Playfair Display', serif; font-size: 52px; font-style: italic; color: var(--terracotta); margin-bottom: 24px; }
+  .confirm-title { font-family: 'Playfair Display', serif; font-size: 28px; font-weight: 400; color: var(--fig); margin-bottom: 16px; }
+  .confirm-text { font-size: 12.5px; line-height: 1.9; color: var(--fig-mid); letter-spacing: 0.03em; max-width: 380px; margin: 0 auto; }
+
+  @media (max-width: 960px) {
+    .page-hero { padding: 60px 28px 56px; }
+    .page-hero::after { left: 28px; right: 28px; }
+    .contact-layout { grid-template-columns: 1fr; padding: 56px 28px; gap: 56px; }
+    .contact-info { position: static; }
+  }
+</style>
+</head>
+<body>
+<div class="grain"></div>
+<div class="cursor" id="cur"></div>
+<div class="cursor-ring" id="curRing"></div>
+
+<nav class="nav">
+  <a href="index.html" class="nav-logo">Saffron <em>Silk</em> Studio</a>
+  <div class="nav-links">
+    <a href="index.html">Home</a>
+    <a href="about.html">About</a>
+    <a href="quiz.html">Skin Analysis</a>
+    <a href="contact.html" class="active">Contact</a>
+    <a href="contact.html" class="nav-cta">Get Early Access</a>
+  </div>
+  <button class="nav-hamburger" id="burger" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+<div class="mobile-nav" id="mobileNav">
+  <button class="mobile-nav-close" id="mobileClose">✕</button>
+  <a href="index.html">Home</a>
+  <a href="about.html">About</a>
+  <a href="quiz.html"><em>Skin Analysis</em></a>
+  <a href="contact.html">Contact</a>
+</div>
+
+<div class="page">
+
+  <div class="page-hero">
+    <div class="page-hero-bg"></div>
+    <div style="max-width:600px;">
+      <div class="eyebrow" style="opacity:0;animation:rise 0.9s ease 0.1s forwards">
+        <div class="eyebrow-line"></div>
+        <div class="eyebrow-text">Early Access</div>
+      </div>
+      <h1 class="display" style="opacity:0;animation:rise 1s ease 0.25s forwards">
+        Be first.<br><em>Be informed.</em>
+      </h1>
+      <p class="body-text" style="margin-top:24px;opacity:0;animation:rise 1s ease 0.4s forwards">
+        Saffron Silk Studio launches quietly. Reserve your place on the waitlist for priority access and exclusive previews.
+      </p>
+    </div>
+  </div>
+
+  <div class="contact-layout">
+
+    <!-- INFO -->
+    <div class="contact-info fade-up">
+      <div class="eyebrow"><div class="eyebrow-line"></div><div class="eyebrow-text">What to Expect</div></div>
+      <h2 class="section-title">Join the<br><em>studio.</em></h2>
+      <p class="body-text">Early access members receive priority notification at launch, exclusive previews of the brand, and first access to the full skin consultation experience.</p>
+
+      <div class="info-items">
+        <div class="info-item">
+          <div class="info-item-label">Instagram</div>
+          <div class="info-item-val"><a href="https://instagram.com/saffronsilkstudio" target="_blank">@saffronsilkstudio</a></div>
+        </div>
+        <div class="info-item">
+          <div class="info-item-label">Launching</div>
+          <div class="info-item-val">2025 — California</div>
+        </div>
+        <div class="info-item">
+          <div class="info-item-label">Skin Analysis</div>
+          <div class="info-item-val"><a href="quiz.html">Available now — complimentary</a></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FORM -->
+    <div class="fade-up">
+      <div id="contact-form">
+        <div class="form-group">
+          <label class="form-label">Full Name</label>
+          <input type="text" id="f-name" class="form-input" placeholder="Your name">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Email Address</label>
+          <input type="email" id="f-email" class="form-input" placeholder="your@email.com">
+        </div>
+        <div class="form-group">
+          <label class="form-label">I'm interested in</label>
+          <select id="f-interest" class="form-select">
+            <option value="" disabled selected>Select one</option>
+            <option>Skincare products</option>
+            <option>Aesthetic services</option>
+            <option>Both — keep me informed of everything</option>
+            <option>Just following the brand</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Anything you'd like us to know?</label>
+          <textarea id="f-message" class="form-input" placeholder="Skin concerns, questions, or a note to the studio…"></textarea>
+        </div>
+        <div class="form-group">
+          <div class="form-checkboxes">
+            <label class="form-check">
+              <input type="checkbox" id="f-consent" checked>
+              <div class="check-box" id="check-box-1">✓</div>
+              I'd like to receive brand updates and early access notifications. I can unsubscribe at any time.
+            </label>
+          </div>
+        </div>
+        <button class="btn-primary" onclick="submitForm()" style="width:100%;text-align:center;">Reserve My Place</button>
+        <div class="form-note" id="form-note">Your information is never sold or shared.</div>
+      </div>
+
+      <div class="form-confirm" id="form-confirm">
+        <div class="confirm-icon">✦</div>
+        <div class="confirm-title">You're on the list.</div>
+        <p class="confirm-text">Thank you for your interest in Saffron Silk Studio. We'll be in touch before the launch — quietly, and with intention.</p>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+<footer>
+  <div class="footer-top">
+    <div>
+      <div class="footer-brand-name">Saffron <em>Silk</em> Studio</div>
+      <p class="footer-tagline">A clinical-luxury skincare studio where laboratory precision meets elevated aesthetic care.</p>
+    </div>
+    <div>
+      <div class="footer-col-title">Navigate</div>
+      <div class="footer-links">
+        <a href="index.html">Home</a>
+        <a href="about.html">About</a>
+        <a href="quiz.html">Skin Analysis</a>
+        <a href="contact.html">Contact</a>
+      </div>
+    </div>
+    <div>
+      <div class="footer-col-title">Connect</div>
+      <div class="footer-links">
+        <a href="https://instagram.com/saffronsilkstudio" target="_blank">@saffronsilkstudio</a>
+        <a href="contact.html">Get Early Access</a>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <div class="footer-copy">© 2025 Saffron Silk Studio · All rights reserved</div>
+    <div class="footer-copy">Clinical Luxury Skincare</div>
+  </div>
+</footer>
+
+<script src="js/main.js"></script>
+<script>
+// Checkbox toggle
+document.querySelectorAll('.form-check').forEach(label => {
+  const input = label.querySelector('input');
+  const box = label.querySelector('.check-box');
+  label.addEventListener('click', () => {
+    setTimeout(() => { box.textContent = input.checked ? '✓' : ''; }, 0);
+  });
+});
+
+function submitForm() {
+  const email = document.getElementById('f-email').value;
+  const note = document.getElementById('form-note');
+  if (!email || !email.includes('@')) {
+    note.style.color = '#7A3030';
+    note.textContent = 'Please enter a valid email address.';
+    return;
+  }
+  document.getElementById('contact-form').style.display = 'none';
+  document.getElementById('form-confirm').style.display = 'block';
+}
+</script>
+</body>
+</html>
